@@ -261,11 +261,16 @@ class History(Resource):
         # args = parser.parse_args('user_id')
         # args = request.get_json(force=True) # args['user_id'
         args = request.args
-        id = int(args.get('user_id'))
-        print(id)
+        idd = int(args.get('user_id'))
+        print(idd)
 
-        db_history = exec_get_all("SELECT movies.id, movies.genre_id, movies.name, history.user_id FROM "
-                     "(history RIGHT JOIN movies ON history.user_id = movies.id) WHERE history.user_id = %s", [id])
+        # db_history = exec_get_all("SELECT movies.id, movies.name FROM "
+        #              "(history LEFT JOIN movies ON history.user_id = movies.id) WHERE history.user_id = %s", [idd])
+        db_history = exec_get_all("SELECT movie_id FROM history WHERE user_id = %s", [idd])
+
+        print('id = ', idd)
+        print('history:')
+        print(db_history)
 
         history_list = []
         for movie in db_history:

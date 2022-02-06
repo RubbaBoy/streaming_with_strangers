@@ -19,7 +19,7 @@ export function displayMovie(movie: Movie, navigate: any) {
         fetch(`${API_URL}/create_active_room`, {
             method: 'POST',
             body: JSON.stringify({
-                'user_id': localStorage.getItem('id'),
+                'user_id': parseInt(localStorage.getItem('id') ?? '0'),
                 'movie_id': movie.id,
             }),
         }).then(async res => {

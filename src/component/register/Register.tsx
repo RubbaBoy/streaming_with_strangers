@@ -50,12 +50,6 @@ export const Register = () => {
                 localStorage.setItem('id', body['id'])
                 localStorage.setItem('username', username)
 
-                // setVerify(body['uri'])
-
-                // let qr = new QRious({ value: uri });
-                //
-                // res.end(new Buffer(qr.toDataURL(), 'base64'));
-
                 setQrCode(`https://api.qrserver.com/v1/create-qr-code/?data=${body['uri']}&size=250x250&bgcolor=#FFFFFF`)
             })
     }

@@ -18,10 +18,6 @@ function displayRoom(room: ActiveRoom, navigate: any) {
 }
 
 export const LeftSidebar = () => {
-    // let history: Movie[] = [{id: 0, genre: 0, name: "Movie 0", url: "images/movie.jpg"},
-    //     {id: 1, genre: 0, name: "Movie 1", url: "images/movie.jpg"},
-    //     {id: 2, genre: 0, name: "Movie 2", url: "images/movie.jpg"}]
-
     const [rooms, setRooms] = useState<ActiveRoom[]>([])
 
     useEffect(() => {
@@ -30,7 +26,6 @@ export const LeftSidebar = () => {
                 let json = (await res.json()) as []
                 setRooms(json.map(room => new ActiveRoom(room['id'], room['movie_id'], room['name'], `/images/${room['movie_id']}.jpg`, room['viewers'])))
             })
-        // setRooms([new ActiveRoom(0, 1, 'Shrek 2', '/images/movie.jpg', 3)])
     }, []);
 
     let navigate = useNavigate()
