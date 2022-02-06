@@ -173,6 +173,7 @@ export const Watch = () => {
         }
     }
 
+
     function changePlayState() {
         if (websocket == undefined || videoRef.current == undefined) return
         websocket.send(JSON.stringify({'type': paused ? 'play' : 'pause', 'user': username}));

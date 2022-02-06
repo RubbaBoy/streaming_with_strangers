@@ -157,10 +157,10 @@ class Featured(Resource):
 class ActiveRooms(Resource):
     #{"id": 0, "movie_id": 0, "name": "movie name", "image": "screenshot url?", "viewers"
     def get(self):
-        db_rooms = exec_get_all("SELECT activerooms(id), movies(movie_id), movies(name), movies(image_url), "
-                                   "activeroom(viewers) FROM "
-                                   "(activerooms RIGHT JOIN movies ON activerooms(movie_id) = movies(id))")
-        activerooms_list = []
+        db_rooms = exec_get_all("SELECT activerooms.id, movies.id, movies.name, movies.image_url, "
+                                   "activerooms.viewers FROM "
+                                   "(activerooms LEFT JOIN movies ON activerooms.movie_id = movies.id)")
+        activerooms_list = [] # viewrs and id null
 
         for room in db_rooms:
             activerooms_list.append({'id': room[0], 'movie_id': room[1], 'name': room[2], 'image': room[3],
@@ -180,10 +180,13 @@ class CreateActiveRoom(Resource):
 
         # create anew active room with the correct movie id
         exec_commit("INSERT INTO activerooms (movie_id, viewers) VALUES (%s, 0); ", [args['movie_id']])
+        #add this movie to users history
+        # exec_commit("INSERT INTO history(user_id, movie_id) VALUES(%s, %s)", [args['user_id'], args['movie_id']])
 
         #get the most recently created room(should be the one we just created but is not actually secure)
         room_id_call = exec_get_all("SELECT max(id) FROM activerooms")
         room_id = int(room_id_call[0][0])
+
 
         print('Room ID: ', room_id)
 
@@ -229,14 +232,21 @@ class JoinActiveRoom(Resource):
         movie_id = -1
 
         try:
+            #update the active room's viewers
             exec_commit("UPDATE activerooms set viewers = viewers + 1 WHERE id = %s", [args['room_id']])
-
+            #add the current user into activeroomusers
             exec_commit("INSERT INTO activeroomusers(user_id, activeroom_id) VALUES (%s, %s)", [args['user_id'], args['room_id']])
 
             got = exec_get_all("SELECT movie_id, viewers FROM activerooms WHERE id = %s", [args['room_id']])
             row = got[0]
+            movie_id = row[0]
+            viewers = row[1]
 
-            return jsonify({"status": "success", "movie_id": row[0], "viewers": row[1]})
+            #add this movie to users history
+            exec_commit("INSERT INTO history(user_id, movie_id) VALUES(%s, %s)", [args['user_id'], movie_id])
+
+
+            return jsonify({"status": "success", "movie_id": movie_id, "viewers": viewers})
         except:
             return jsonify({"status": "error"})
 
@@ -274,7 +284,9 @@ class History(Resource):
 
         history_list = []
         for movie in db_history:
-            history_list.append({'movie_id': movie[0], 'genre_id': movie[1], 'name': movie[2], 'url': movie[3]})
+            name = exec_get_one("SELECT name FROM movies WHERE id = %s", [movie[0]])
+            history_list.append({'movie_id': movie[0], 'name': name[0]})
+            # history_list.append({'movie_id': movie[0], 'genre_id': movie[1], 'name': movie[2]})
 
         return jsonify(history_list)
 

@@ -100,8 +100,9 @@ export const Register = () => {
                         <input type="submit" name="button" value="Register"/>
                     </form>}
 
-                    {verify != undefined && <Fragment>
-                        <p className="otc">Put this in your authenticator app: <span>{verify}</span></p>
+                    {qrCode != undefined && <Fragment>
+                        <p className="otc">Put this in your authenticator app: </p>
+                        <img src={qrCode ?? ''} alt='QR Code' className="qr-code"/>
                         <form onSubmit={e => handleVerify(e)}>
                             <div className="code">
                                 <p>One Time Code</p>

@@ -55,7 +55,7 @@ export const Login = () => {
     return (
         <div className="body" >
             <div className="Login">
-                <div className="title">Streaming with Strangers</div>
+                <img src="/images/logo.png" alt="logo"/>
                 <div className="box">
                     <form onSubmit={e => handleSubmit(e)}>
                         <div className={"username"}>
