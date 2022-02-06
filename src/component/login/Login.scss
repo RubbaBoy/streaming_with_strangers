@@ -1,0 +1,56 @@
+@use "src/scss/colors" as colors;
+
+.Login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .title {
+        text-align: center;
+        color: colors.$red;
+        font-size: 50pt;
+        font-family: 'Comic Sans MS', sans-serif;
+        font-weight: bold;
+        padding-bottom: 100pt;
+    }
+
+    .box {
+        width: 100%;
+        max-width: 250px;
+        background-color: colors.$lighter_gray;
+        padding-left: 10pt;
+
+        .login {
+            cursor: pointer;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: colors.$red;
+            color: colors.$text;
+            margin: 16px 0;
+        }
+
+        .error {
+            color: #E00000;
+            margin: 16px 0;
+        }
+
+        .register {
+            display: block;
+            color: blue;
+            margin-bottom: 16px;
+        }
+    }
+
+    .username {
+        color: white;
+    }
+
+    .password {
+        color: white;
+    }
+
+    .twofactor {
+        color: white;
+    }
+}

@@ -1,0 +1,75 @@
+@use "src/scss/colors" as colors;
+
+.Watch {
+    display: flex;
+    flex-direction: row;
+
+    .video {
+        flex-grow: 1;
+        height: 100%;
+        width: 100%;
+    }
+
+    .chat {
+        max-width: 250px;
+        height: calc(100vh - 32px);
+        padding: 16px 8px;
+        border-left: 1px solid white;
+        display: flex;
+        flex-direction: column;
+
+        .title {
+            border-bottom: 1px solid white;
+            margin: 0 -8px;
+            text-align: center;
+            padding-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .messages {
+            width: 100%;
+            flex: 1;
+            padding: 8px;
+            color: white;
+
+            .message {
+                display: flex;
+                flex-direction: column;
+                opacity: 0.7;
+
+                .name {
+                    font-weight: bold;
+                }
+
+                .text {
+                    margin-top: 0;
+                }
+            }
+        }
+
+        .send {
+            height: 40px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+
+            input {
+                border-radius: 8px;
+                height: 15px;
+                padding: 10px;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+
+            .enter {
+                cursor: pointer;
+                width: 25px;
+                height: 39px;
+                fill: white;
+                margin-left: 8px;
+            }
+        }
+    }
+}

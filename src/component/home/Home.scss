@@ -1,0 +1,125 @@
+@use "src/scss/colors" as colors;
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@600&display=swap');
+
+.Home {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 100%;
+
+    .title {
+        text-align: center;
+        color: colors.$red;
+        font-size: 50pt;
+        font-family: 'Segoe UI Black', sans-serif;
+    }
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        margin: 0 32px;
+        background-color: colors.$gray_dark;
+        width: 100%;
+        max-width: 1200px;
+
+        .button-row {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+
+            button {
+                color: #FFF;
+                border-radius: 10px;
+                border: none;
+                padding: 16px 32px;
+
+                &:first-child {
+                    margin-right: 16px;
+                }
+            }
+
+            .host {
+                background-color: colors.$red_dark;
+            }
+
+            .join {
+                background-color: colors.$blue_dark;
+            }
+        }
+
+        .content {
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+
+            .featured_title {
+                margin-top: 3em;
+            }
+
+            .genre-row {
+                display: flex;
+                position: relative;
+
+                .hiding {
+                    overflow: hidden;
+                    display: flex;
+                }
+
+                .arrow {
+                    cursor: pointer;
+                    transform: scale(2);
+                    opacity: 0.3;
+                    position: absolute;
+                    fill: white;
+                }
+
+                .left {
+                    left: 0;
+                    top: calc(144px / 2);
+                    transform: translateX(calc(-100% - 10px)) translateY(-50%) scale(-2, 2);
+                }
+
+                .right {
+                    right: 0;
+                    top: calc(144px / 2);
+                    transform: translateY(-50%) scale(2) translateX(calc(50% + 5px));
+                }
+
+                .genres {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 8px;
+                    transition: transform 500ms ease-in 0s;
+
+                    ::-webkit-scrollbar {
+                        width: 0;
+                        height: 0;
+                        background: transparent;  /* Optional: just make scrollbar invisible */
+                    }
+                    /* Optional: show position indicator in red */
+                    ::-webkit-scrollbar-thumb {
+                        background: #FF0000;
+                    }
+
+                    &::after {
+                        content: '';
+                        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICA8cG9seWdvbiBwb2ludHM9IjcuMjkzIDQuNzA3IDE0LjU4NiAxMiA3LjI5MyAxOS4yOTMgOC43MDcgMjAuNzA3IDE3LjQxNCAxMiA4LjcwNyAzLjI5MyA3LjI5MyA0LjcwNyIvPgo8L3N2Zz4K);
+                        position: absolute;
+                    }
+                }
+            }
+
+            .featured {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 30px;
+
+                .movie {
+
+                }
+            }
+        }
+    }
+}

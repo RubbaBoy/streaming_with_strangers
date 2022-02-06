@@ -1,0 +1,40 @@
+@use "src/scss/colors" as colors;
+
+.LeftSidebar {
+    background-color: colors.$lighter_gray;
+
+    .content {
+        .history {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+    }
+
+    .room {
+        .text {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+
+            .name {
+                font-weight: bold;
+                font-size: 24px;
+            }
+
+            .viewers {
+                display: flex;
+
+                .count {
+                    font-size: 20px;
+                    font-weight: bold;
+                    line-height: 24px;
+                    margin-right: 8px;
+                }
+            }
+        }
+    }
+}

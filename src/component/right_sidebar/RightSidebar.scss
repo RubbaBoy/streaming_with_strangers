@@ -1,0 +1,31 @@
+@use "src/scss/colors" as colors;
+
+.RightSidebar {
+    background-color: colors.$lighter_gray;
+
+    .content {
+        .account_view {
+            width: 100%;
+            //padding: 16px;
+
+            .name {
+                margin: 1em 0 0.5em 0;
+            }
+
+            .logout, .login {
+                cursor: pointer;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 8px;
+                background: colors.$red;
+                color: colors.$text;
+            }
+        }
+
+        .history {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+    }
+}

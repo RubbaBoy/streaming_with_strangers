@@ -1,0 +1,66 @@
+{
+  "name": "streaming_with_strangers",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://89c1-2620-8d-8000-1050-24f2-93fe-ff18-8c79.ngrok.io",
+  "homepage": ".",
+  "devServer": {
+    "disableHostCheck": true
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.15.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^12.20.37",
+    "@types/react": "^17.0.36",
+    "@types/react-dom": "^17.0.11",
+    "bootstrap": "^5.1.3",
+    "dompurify": "^2.3.4",
+    "marked": "^4.0.10",
+    "pretty-bytes": "^5.6.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router": "6.0.2",
+    "react-router-dom": "6.0.2",
+    "react-scripts": "4.0.3",
+    "reactstrap": "^9.0.1",
+    "sass": "^1.44.0",
+    "typescript": "^4.5.2",
+    "uuid": "^8.3.2",
+    "web-vitals": "^1.1.2",
+    "yaml": "^1.10.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "rules": {
+      "eqeqeq": "off"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/dompurify": "^2.3.3",
+    "@types/marked": "^4.0.1",
+    "@types/uuid": "^8.3.3"
+  }
+}
