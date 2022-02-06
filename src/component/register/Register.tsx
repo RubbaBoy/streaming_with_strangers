@@ -1,5 +1,6 @@
 import React, {Fragment, FormEvent, useState} from 'react';
 import './Register.scss';
+import {API_URL} from "../../index";
 
 export const Register = () => {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -16,7 +17,7 @@ export const Register = () => {
 
         console.log('Here!');
 
-        await fetch(`http://localhost:5000/register`,
+        await fetch(`${API_URL}/register`,
             {method: 'POST', body: JSON.stringify({
                     'username': username,
                     'password': password,
@@ -24,7 +25,6 @@ export const Register = () => {
                 })})
             .then(async res => {
                 console.log('then');
-
 
                 if (res.status != 200) {
                     console.log('Uh oh! ' + res.status);
@@ -38,9 +38,11 @@ export const Register = () => {
                 }
 
                 console.log('Logged in with ' + body['token']);
+                console.log('User ID: ' + body['id']);
                 console.log('Got URI: ' + body['uri']);
 
                 localStorage.setItem('token', body['token'])
+                localStorage.setItem('id', body['id'])
                 localStorage.setItem('username', username)
 
                 setVerify(body['uri'])
@@ -53,7 +55,7 @@ export const Register = () => {
 
         console.log('Got code: ' + code);
 
-        await fetch('http://localhost:5000/register_verify', {
+        await fetch(`${API_URL}/register_verify`, {
             method: 'POST',
             body: JSON.stringify({
                 'token': localStorage.getItem('token') ?? '',

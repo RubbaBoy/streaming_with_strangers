@@ -2,7 +2,6 @@
   "name": "streaming_with_strangers",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://89c1-2620-8d-8000-1050-24f2-93fe-ff18-8c79.ngrok.io",
   "homepage": ".",
   "devServer": {
     "disableHostCheck": true

@@ -2,6 +2,7 @@ import React, {FormEvent, useState} from 'react';
 import './Login.scss';
 import {useNavigate} from "react-router";
 import {Simulate} from "react-dom/test-utils";
+import {API_URL} from "../../index";
 
 export const Login = () => {
     let navigate = useNavigate();
@@ -22,7 +23,7 @@ export const Login = () => {
 
         console.log('Here!');
 
-        fetch(`http://localhost:5000/login`,
+        fetch(`${API_URL}/login`,
             {method: 'POST', body: JSON.stringify({
                     'username': username,
                     'password': password,
@@ -41,9 +42,10 @@ export const Login = () => {
                     return
                 }
 
-                console.log('Logged in with ' + body['token']);
+                console.log('Logged in with: ' + body['token'] + ' and ID of: ' + body['id']);
 
                 localStorage.setItem('token', body['token'])
+                localStorage.setItem('id', body['id'])
                 localStorage.setItem('username', username)
 
                 navigate('/')

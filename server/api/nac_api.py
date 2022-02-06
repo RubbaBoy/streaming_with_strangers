@@ -5,12 +5,13 @@ from flask_restful import request
 from flask_restful import reqparse
 from flask import jsonify, Response
 from pyotp import *
-import socket
+from websockets import serve
 import threading
 import uuid
 import psycopg2
 import yaml
 import os
+import asyncio
 # from 'utils.py' import *
 
 # from server.api.utils import exec_commit, exec_get_all
@@ -43,15 +44,16 @@ class Register(Resource):
         exec_commit("UPDATE users set token = %s WHERE name = %s", [str(token), args['username']])
         ###
 
+        # What are we in??
+        user_id = exec_get_all("SELECT max(id) FROM users")
+
         # generator_uri
 
         # Possible response object if we need headers
         # resp = Response({'uri': "TEST"})
         # resp.headers['Access-Control-Allow-Origin'] = '*'
 
-        print('bruh')
-
-        return jsonify({'uri': generator_uri, 'token': token})
+        return jsonify({'uri': generator_uri, 'token': token, 'id': user_id})
 
 
 class RegisterVerify(Resource):
@@ -95,20 +97,21 @@ class Login(Resource):
         # args = parser.parse_args()
         args = request.get_json(force=True)
 
-        db_resp = exec_get_all('select name, authkey from users where name=%s and password=%s', [args['username'], hash(args['password'])])[0]
+        db_resp = exec_get_all('select name, authkey, id from users where name=%s and password=%s', [args['username'], hash(args['password'])])[0]
 
         if (db_resp == []):
             return jsonify({'token': 'ERROR'})
 
         valid_username = db_resp[0]
         valid_key = db_resp[1]
+        id = db_resp[2]
 
         code_generator = totp.TOTP(valid_key) # code.now() gives the code current auth code
 
         if valid_username == args['username'] and code_generator.verify(int(args['2fa'])):#IF LOGIN IS SUCCESSFUL
             token = uuid.uuid4()
             exec_commit("UPDATE users set token = %s WHERE name = %s", [str(token), args['username']])
-            resp ={'token': token}
+            resp ={'token': token, 'id': id}
         else:
             resp = {"token": "ERROR"}
 
@@ -171,68 +174,47 @@ class CreateActiveRoom(Resource):
     def post(self):
         # parser = reqparse.RequestParser()
         # parser.add_argument('user_id')
-        # parser.add_argument('movie_id')
+        # parser.add_argument('movie_id') # DONT NEED NOW (see below TO DO)
         # args = parser.parse_args()
         args = request.get_json(force=True)
-
-        class Server:
-            def __init__(self):
-                self.start_server()
-
-            def start_server(self):
-                self.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-
-                host = 'localhost'
-                port = 5001
-
-                self.clients = []
-
-                self.s.bind((host,port))
-                self.s.listen(100)
-
-                print('Running on host: '+str(host))
-                print('Running on port: '+str(port))
-
-
-                while True:
-                    c, addr = self.s.accept()
-
-                    self.clients.append(c)
-
-                    threading.Thread(target=self.handle_client,args=(c,addr,)).start()
-
-            def broadcast(self,msg):
-                for connection in self.clients:
-                    connection.send(msg.encode())
-
-            def handle_client(self,c,addr):
-                while True:
-                    try:
-                        msg = c.recv(1024)
-                    except:
-                        c.shutdown(socket.SHUT_RDWR)
-                        self.clients.remove(c)
-
-                        break
-
-                    if msg.decode() != '':
-                        print('New message: '+str(msg.decode()))
-                        for connection in self.clients:
-                            if connection != c:
-                                connection.send(msg)
-
-        server = Server()
 
         # create anew active room with the correct movie id
         exec_commit("INSERT INTO activerooms (movie_id) VALUES (%s); ", [args['movie_id']])
 
         #get the most recently created room(should be the one we just created but is not actually secure)
-        room_id = exec_get_all("SELECT max(id) FROM activerooms")
+        room_id_call = exec_get_all("SELECT max(id) FROM activerooms")
+        room_id = int(room_id_call[0][0])
+
+        print('Room ID: ', room_id)
 
         #take the new room's id and add the current user into the room
-        exec_commit("INSERT INTO activeroomusers(user_id, activeroom_id) VALUES (%s, %s)", [args['user_id'], room_id[0]])
+        # exec_commit("INSERT INTO activeroomusers(user_id, activeroom_id) VALUES (%s, %s)", [args['user_id'], room_id])
 
-        return jsonify({room_id: room_id})
+        def start():
+            async def start_server():
+                clients = []
+
+                async def echo(websocket, path):
+                    clients.append(websocket)
+
+                    async for message in websocket:
+                        for client in clients:
+                            try:
+                                await client.send(message)
+                            except:
+                                clients.remove(client)
+
+                print('Starting socket on 0.0.0.0:' + str(5001 + room_id))
+                async with serve(echo, '0.0.0.0', 5001 + room_id):
+                    await asyncio.Future()
+
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(start_server())
+
+        threading.Thread(target=start).start()
+
+        return jsonify({'room_id': room_id})
 
 
 # Makes a user join a room
@@ -244,11 +226,19 @@ class JoinActiveRoom(Resource):
         # args = parser.parse_args()
         args = request.get_json(force=True)
 
-        exec_commit("UPDATE activerooms set viewers = viewers + 1 WHERE id = %s", [args['room_id']])
+        movie_id = -1
 
-        exec_commit("INSERT INTO activeroomusers(user_id, activeroom_id) VALUES (%s, %s)", [args['user_id'], args['room_id']])
+        try:
+            exec_commit("UPDATE activerooms set viewers = viewers + 1 WHERE id = %s", [args['room_id']])
 
-        return jsonify({"status": "success"})
+            exec_commit("INSERT INTO activeroomusers(user_id, activeroom_id) VALUES (%s, %s)", [args['user_id'], args['room_id']])
+
+            got = exec_get_all("SELECT movie_id, viewers FROM activerooms WHERE id = %s", [args['room_id']])
+            row = got[0]
+
+            return jsonify({"status": "success", "movie_id": row[0], "viewers": row[1]})
+        except:
+            return jsonify({"status": "error"})
 
 
 # Actually starting the movie

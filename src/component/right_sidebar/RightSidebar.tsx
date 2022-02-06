@@ -14,6 +14,7 @@ export const RightSidebar = () => {
 
     function logOut() {
         localStorage.removeItem('token')
+        localStorage.removeItem('id')
         localStorage.removeItem('username')
 
         navigate('/')

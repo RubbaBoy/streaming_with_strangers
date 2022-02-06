@@ -22,7 +22,6 @@ api.add_resource(StartActiveRoom, '/start_active_room')
 
 @app.after_request
 def apply_caching(response):
-    print('bruh')
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
@@ -31,4 +30,4 @@ if __name__ == '__main__':
     print("Starting flask")
     print("Starting Database")
     exec_sql_file('deploy.sql')
-    app.run(debug=True), #starts Flask
+    app.run(debug=True,host='0.0.0.0'), #starts Flask

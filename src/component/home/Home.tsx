@@ -4,6 +4,7 @@ import {RightSidebar} from "../right_sidebar/RightSidebar";
 import {LeftSidebar} from "../left_sidebar/LeftSidebar";
 import {Genre, Movie} from "../../logic/objects";
 import {useNavigate} from "react-router";
+import {API_URL} from "../../index";
 
 export function displayGenre(genre: Genre) {
     return (
@@ -14,8 +15,23 @@ export function displayGenre(genre: Genre) {
 }
 
 export function displayMovie(movie: Movie, navigate: any) {
+    function startMovie() {
+        fetch(`${API_URL}/create_active_room`, {
+            method: 'POST',
+            body: JSON.stringify({
+                'user_id': localStorage.getItem('id'),
+                'movie_id': movie.id,
+            }),
+        }).then(async res => {
+            let json = await res.json()
+            let id = json['room_id']
+            console.log('Created room with ID of: ' + id);
+            navigate('/watch/' + id)
+        })
+    }
+
     return (
-        <div className="movie display" onClick={() => navigate('/watch/' + movie.id)}>
+        <div className="movie display" onClick={() => startMovie()}>
             <img className="cover" src={movie.url} alt="genre"/>
             <span className="name">{movie.name}</span>
         </div>
@@ -32,13 +48,13 @@ export const Home = () => {
     const [movies, setMovies] = useState<Movie[]>([])
 
     useEffect(() => {
-        fetch('http://localhost:5000/genres')
+        fetch(`${API_URL}/genres`)
             .then(async res => {
                 let json = (await res.json()) as []
                 setGenres(json.map(genre => new Genre(genre['id'], genre['name'], genre['color1'], genre['color2'])))
             })
 
-        fetch('http://localhost:5000/featured')
+        fetch(`${API_URL}/featured`)
             .then(async res => {
                 let json = (await res.json()) as []
                 setMovies(json.map(movie => new Movie(movie['id'], movie['name'], `/images/${movie['id']}.jpg`)))
