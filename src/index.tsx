@@ -5,8 +5,8 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
 import {App} from "./component/App";
 
-export const API_URL = 'http://25.20.15.153:5000'
-export const SOCKET_HOST = 'ws://25.20.15.153'
+export const API_URL = 'http://25.20.22.226:5000'
+export const SOCKET_HOST = 'ws://25.20.22.226'
 
 ReactDOM.render(
   <React.StrictMode>

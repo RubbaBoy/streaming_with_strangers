@@ -1,14 +1,22 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './RightSidebar.scss';
-import {Movie, User} from "../../logic/objects";
+import {ActiveRoom, Movie, User} from "../../logic/objects";
 import {useNavigate} from "react-router";
 import {displayMovie} from "../home/Home";
+import {API_URL} from "../../index";
 
 export const RightSidebar = () => {
-    // let history: Movie[] = [{id: 0, genre: 0, name: "Movie 0", url: "images/movie.jpg"},
-    //     {id: 1, genre: 0, name: "Movie 1", url: "images/movie.jpg"},
-    //     {id: 2, genre: 0, name: "Movie 2", url: "images/movie.jpg"}]
-    let history: Movie[] = []
+    let [history, setHistory] = useState<Movie[]>([])
+
+    useEffect(() => {
+        if (localStorage.getItem('id') == null) return;
+        fetch(`${API_URL}/history?user_id=${localStorage.getItem('id')}`)
+            .then(async res => {
+                let json = (await res.json()) as []
+                setHistory(json.map(movie => new Movie(movie['movie_id'], movie['name'], `/images/${movie['movie_id']}.jpg`)))
+            })
+        // setHistory([new ActiveRoom(0, 1, 'Shrek 2', '/images/movie.jpg', 3)])
+    }, []);
 
     let navigate = useNavigate();
 

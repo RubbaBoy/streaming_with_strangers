@@ -19,9 +19,18 @@
         width: 100%;
         max-width: 250px;
         background-color: colors.$lighter_gray;
-        padding-left: 10pt;
+        padding: 16px;
 
         .otc {
+            color: white;
+        }
+
+        .qr-code {
+            width: 250px;
+            height: 250px;
+        }
+
+        .code > p {
             color: white;
         }
     }
@@ -38,8 +47,13 @@
         color: white;
     }
     form > input {
-        margin-top: 20pt;
-        margin-bottom: 20pt;
+        cursor: pointer;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: colors.$red;
+        color: colors.$text;
+        margin: 16px 0;
     }
 
 

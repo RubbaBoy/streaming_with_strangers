@@ -133,10 +133,12 @@ export const Watch = () => {
                     } else if (json['type'] == 'pause') {
                         console.log('Pausing movie!');
                         videoRef.current?.pause()
+                        setPaused(true)
                     } else if (json['type'] == 'play') {
                         console.log('Playing movie!');
                         console.log(videoRef.current);
                         videoRef.current?.play().catch(e => console.log(e))
+                        setPaused(false)
                     } else if (json['type'] == 'message') {
                         console.log('Adding message ' + json);
                         console.log('Current: ' + items);
@@ -195,7 +197,7 @@ export const Watch = () => {
                             <source src={`/videos/${movieId}.mp4`} type="video/mp4"/>
                             Your browser isn't good enough for this
                         </video>
-                        <div className="controls"><button onClick={() => changePlayState()} className="play_pause"><img src={paused ? pause : play} alt="play/pause"/></button></div>
+                        <div className="controls"><button onClick={() => changePlayState()} className="play_pause"><img src={paused ? play : pause} alt="play/pause"/></button></div>
                     </Fragment>}
             </div>
             <div className="chat">

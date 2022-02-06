@@ -12,12 +12,10 @@ import psycopg2
 import yaml
 import os
 import asyncio
-# from 'utils.py' import *
-
-# from server.api.utils import exec_commit, exec_get_all
 
 def hash(string):
     return sha256(string.encode('utf-8')).hexdigest()
+
 
 class Register(Resource):
     def post(self):
@@ -67,12 +65,14 @@ class RegisterVerify(Resource):
         db_authkey = exec_get_all('SELECT authkey FROM users WHERE token=%s', [args['token']])
 
         # TODO: is db_authkey a single var? Or should I array access[0]?
-        valid_key = db_authkey[0]
+        valid_key = db_authkey[0][0]
         code_generator = totp.TOTP(valid_key)
 
         print('Valid key (generated in db): ', valid_key)
 
         #if the authkeys match
+        print(args)
+        print(args['code'])
         if code_generator.verify(int(args['code'])):
             validcode = True
         else:
@@ -97,14 +97,14 @@ class Login(Resource):
         # args = parser.parse_args()
         args = request.get_json(force=True)
 
-        db_resp = exec_get_all('select name, authkey, id from users where name=%s and password=%s', [args['username'], hash(args['password'])])[0]
+        db_resp = exec_get_all('select name, authkey, id from users where name=%s and password=%s', [args['username'], hash(args['password'])])
 
         if (db_resp == []):
             return jsonify({'token': 'ERROR'})
 
-        valid_username = db_resp[0]
-        valid_key = db_resp[1]
-        id = db_resp[2]
+        valid_username = db_resp[0][0]
+        valid_key = db_resp[0][1]
+        id = db_resp[0][2]
 
         code_generator = totp.TOTP(valid_key) # code.now() gives the code current auth code
 
@@ -179,7 +179,7 @@ class CreateActiveRoom(Resource):
         args = request.get_json(force=True)
 
         # create anew active room with the correct movie id
-        exec_commit("INSERT INTO activerooms (movie_id) VALUES (%s); ", [args['movie_id']])
+        exec_commit("INSERT INTO activerooms (movie_id, viewers) VALUES (%s, 0); ", [args['movie_id']])
 
         #get the most recently created room(should be the one we just created but is not actually secure)
         room_id_call = exec_get_all("SELECT max(id) FROM activerooms")
@@ -257,12 +257,15 @@ class StartActiveRoom(Resource):
 
 class History(Resource):
     def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('token')
-        args = parser.parse_args()
+        # parser = reqparse.RequestParser()
+        # args = parser.parse_args('user_id')
+        # args = request.get_json(force=True) # args['user_id'
+        args = request.args
+        id = int(args.get('user_id'))
+        print(id)
 
-        db_history = exec_get_all("SELECT movies(id), movies(genre_id), movies(name), movies(image_url) FROM "
-                     "(history RIGHT JOIN movies ON history.user_id = movies.id)")
+        db_history = exec_get_all("SELECT movies.id, movies.genre_id, movies.name, history.user_id FROM "
+                     "(history RIGHT JOIN movies ON history.user_id = movies.id) WHERE history.user_id = %s", [id])
 
         history_list = []
         for movie in db_history:

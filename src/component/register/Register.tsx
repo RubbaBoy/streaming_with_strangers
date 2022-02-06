@@ -1,8 +1,13 @@
-import React, {Fragment, FormEvent, useState} from 'react';
+import React, {Fragment, FormEvent, useState, createRef, useEffect} from 'react';
 import './Register.scss';
 import {API_URL} from "../../index";
+import {useNavigate} from "react-router";
 
 export const Register = () => {
+    let navigate = useNavigate();
+
+    const [qrCode, setQrCode] = useState<string | undefined>()
+
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         // @ts-ignore
         let username = event.target[0].value
@@ -45,13 +50,21 @@ export const Register = () => {
                 localStorage.setItem('id', body['id'])
                 localStorage.setItem('username', username)
 
-                setVerify(body['uri'])
+                // setVerify(body['uri'])
+
+                // let qr = new QRious({ value: uri });
+                //
+                // res.end(new Buffer(qr.toDataURL(), 'base64'));
+
+                setQrCode(`https://api.qrserver.com/v1/create-qr-code/?data=${body['uri']}&size=250x250&bgcolor=#FFFFFF`)
             })
     }
 
     async function handleVerify(event: FormEvent<HTMLFormElement>) {
         // @ts-ignore
         let code = event.target[0].value
+
+        event.preventDefault()
 
         console.log('Got code: ' + code);
 
@@ -65,18 +78,19 @@ export const Register = () => {
             let json = await res.json()
             if (!json['login']) {
                 console.log('Bad login!');
+                alert('Bad 2FA!')
+            } else {
+                navigate('/')
             }
         })
     }
 
-    const [verify, setVerify] = useState<string | undefined>()
-
     return (
         <div className="body" >
             <div className="Register">
-                <div className="title">Streaming with Strangers</div>
+                <img src="/images/logo.png" alt="logo"/>
                 <div className="box">
-                    {verify == undefined && <form onSubmit={e => handleSubmit(e)}>
+                    {qrCode == undefined && <form onSubmit={e => handleSubmit(e)}>
                         <div className={"username"}>
                             <p>Username</p>
                             <input type="text" name="username"/>
@@ -95,7 +109,7 @@ export const Register = () => {
                     {verify != undefined && <Fragment>
                         <p className="otc">Put this in your authenticator app: <span>{verify}</span></p>
                         <form onSubmit={e => handleVerify(e)}>
-                            <div className={"code"}>
+                            <div className="code">
                                 <p>One Time Code</p>
                                 <input type="number" name="code"/>
                             </div>

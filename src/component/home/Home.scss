@@ -19,8 +19,8 @@
         flex-direction: column;
         margin: 0 32px;
         background-color: colors.$gray_dark;
-        width: 100%;
-        max-width: 1200px;
+        width: calc(100% - 350px - 350px);
+        padding-bottom: 40px;
 
         .button-row {
             display: flex;
