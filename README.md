@@ -30,11 +30,6 @@ Accomplishments that we're proud of
 # What we learned
 
 At the start of this hackathon only two of our team members were familiar with the front-end framework we were using and only one of us was familiar with the back-end framework. This hackathon provided us the opportunity to learn react, flask, a bit of SQL, and database creation. We also learned how valuable planning and communication are in a short-term project. Because we started our process by planning out every API call and designing the website, we spent the rest of the time working without ever having to think about what needed to get done. We also discussed any changes that we made to our original plan and maintained a master document for all API calls with their responses, this communication meant that everyone constantly understood the scope of the project and all the requirements.
-What's next for Streaming with Strangers
-
-    Eventually we would like to add a voice call option so people can talk in real time, and then possibly a video call option as well.
-    We also would like to partner with streaming services to vastly expand our library, possibly by verifying streaming accounts and then buying movie licenses as a site, much like movie theaters.
-    Also, a friends option where you can save people you have watched with.
 
 
 
